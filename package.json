@@ -1,0 +1,24 @@
+{
+  "name": "@fnando/check",
+  "description": "An alternative for switch..case.",
+  "license": "MIT",
+  "browser": "dist/check.web.js",
+  "module": "dist/check.commonjs2.js",
+  "node": "dist/check.node.js",
+  "scripts": {
+    "test": "webpack src/check.test.js --mode development --display errors-only --output tmp/check.test.js --target node && node tmp/check.test.js",
+    "dist:web": "webpack src/check.js --mode production --target web --output dist/check.web.js",
+    "dist:commonjs2": "webpack src/check.js --mode production --target web --output-library-target commonjs2 --output dist/check.commonjs2.js",
+    "dist:node": "webpack src/check.js --mode production --target node --output dist/check.node.js",
+    "dist": "yarn test && yarn dist:web && yarn dist:node && yarn dist:commonjs2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.1.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.0.0",
+    "@babel/preset-env": "^7.1.5",
+    "babel-loader": "^8.0.4",
+    "webpack": "^4.25.1",
+    "webpack-cli": "^3.1.2"
+  },
+  "browserslist": "> 0.25%, not dead"
+}
