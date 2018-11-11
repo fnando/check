@@ -1,6 +1,7 @@
 {
   "name": "@fnando/check",
   "description": "An alternative for switch..case.",
+  "version": "0.1.0",
   "license": "MIT",
   "browser": "dist/check.web.js",
   "module": "dist/check.commonjs2.js",
