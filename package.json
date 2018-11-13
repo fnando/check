@@ -7,11 +7,14 @@
   "browser": "dist/check.web.js",
   "module": "dist/check.commonjs2.js",
   "node": "dist/check.node.js",
+  "engines": {
+    "node": "11.x"
+  },
   "scripts": {
     "test": "webpack src/check.test.js --mode development --display errors-only --output tmp/check.test.js --target node && node tmp/check.test.js",
-    "dist:web": "webpack src/check.js --mode production --target web --output dist/check.web.js",
-    "dist:commonjs2": "webpack src/check.js --mode production --target web --output-library-target commonjs2 --output dist/check.commonjs2.js",
-    "dist:node": "webpack src/check.js --mode production --target node --output dist/check.node.js",
+    "dist:web": "webpack src/index.js --mode production --target web --output dist/check.web.js",
+    "dist:commonjs2": "webpack src/index.js --mode production --target web --output-library-target commonjs2 --output dist/check.commonjs2.js",
+    "dist:node": "webpack src/index.js --mode production --target node --output dist/check.node.js",
     "dist": "yarn test && yarn dist:web && yarn dist:node && yarn dist:commonjs2"
   },
   "devDependencies": {

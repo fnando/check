@@ -1,4 +1,4 @@
-import check from "./check";
+import check from "./index";
 import {strict as assert} from "assert";
 
 function test(description, callback) {
