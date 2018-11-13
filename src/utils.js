@@ -67,6 +67,8 @@ export function match(input, condition) {
     return true;
   } else if (isArray(condition)) {
     return condition.some(cond => match(input, cond));
+  } else if (isFunction(condition)) {
+    return !!condition(input);
   } else {
     return input === condition;
   }

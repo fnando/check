@@ -1,8 +1,16 @@
-import check from "./index";
+import {check, condition} from "./index";
 import {strict as assert} from "assert";
+import {lt, lte, gt, gte, within, includes, startsWith, endsWith} from "./conditions";
 
 function test(description, callback) {
-  callback();
+  try {
+    callback();
+    console.log(`\u001B[32m✅ ${description}\u001B[0m`);
+  } catch (error) {
+    console.log(`\u001B[31m❌ ${description}\u001B[0m`);
+    console.log(error.stack.replace(/^/gm, "   "));
+    process.exit(1);
+  }
 }
 
 function call() {
@@ -226,4 +234,152 @@ test("calls default function without case", () => {
 
   assert.ok(func.called);
   assert.equal(func.input, 1234)
+});
+
+[
+  // input, expected, result
+  [1, 2, true],
+  [2, 1, false],
+  [1, 1, false]
+].forEach(([input, expected, result]) => {
+  test(`tests lt (${input} < ${expected} == ${result})`, () => {
+    const func = call();
+
+    check(input)
+      .case(lt(expected), func)
+      .test();
+
+    assert.ok(func.called === result);
+  });
+});
+
+[
+  // input, expected, result
+  [1, 2, true],
+  [2, 1, false],
+  [1, 1, true]
+].forEach(([input, expected, result]) => {
+  test(`tests lte (${input} <= ${expected} == ${result})`, () => {
+    const func = call();
+
+    check(input)
+      .case(lte(expected), func)
+      .test();
+
+    assert.ok(func.called === result);
+  });
+});
+
+[
+  // input, expected, result
+  [1, 2, false],
+  [2, 1, true],
+  [1, 1, false]
+].forEach(([input, expected, result]) => {
+  test(`tests gt (${input} > ${expected} == ${result})`, () => {
+    const func = call();
+
+    check(input)
+      .case(gt(expected), func)
+      .test();
+
+    assert.ok(func.called === result);
+  });
+});
+
+[
+  // input, expected, result
+  [1, 2, false],
+  [2, 1, true],
+  [1, 1, true]
+].forEach(([input, expected, result]) => {
+  test(`tests gte (${input} > ${expected} == ${result})`, () => {
+    const func = call();
+
+    check(input)
+      .case(gte(expected), func)
+      .test();
+
+    assert.ok(func.called === result);
+  });
+});
+
+[
+  // input, expected, result
+  [2, [1, 3], true],
+  [4, [1, 3], false],
+].forEach(([input, expected, result]) => {
+  test(`tests within (${input} within ${expected.join("..")} == ${result})`, () => {
+    const func = call();
+
+    check(input)
+      .case(within(...expected), func)
+      .test();
+
+    assert.ok(func.called === result);
+  });
+});
+
+[
+  // input, expected, result
+  ["hello", "ll", true],
+  ["", "hello", false],
+  [[1, 2, 3], 1, true],
+  [[], 1, false],
+  [undefined, 1, false],
+  [null, 1, false],
+  [true, 1, false],
+  [false, 1, false],
+].forEach(([input, expected, result]) => {
+  test(`tests includes (${JSON.stringify(input)}.includes(${expected}) == ${result})`, () => {
+    const func = call();
+
+    check(input)
+      .case(includes(expected), func)
+      .test();
+
+    assert.ok(func.called === result);
+  });
+});
+
+[
+  // input, expected, result
+  ["hello", "he", true],
+  ["hello", "ll", false],
+  [null, "he", false],
+  [undefined, "he", false],
+  [false, "he", false],
+  [true, "he", false],
+].forEach(([input, expected, result]) => {
+  test(`tests startsWith (${JSON.stringify(input)}.startsWith(${expected}) == ${result})`, () => {
+    const func = call();
+
+    check(input)
+      .case(startsWith(expected), func)
+      .test();
+
+    assert.ok(func.called === result);
+  });
+});
+
+test("defines custom condition (no args)", () => {
+  const func = call();
+  const email = condition(actual => `${actual}`.match(/^.+@.+$/));
+
+  check("john@example.com")
+    .case(email(), func)
+    .test();
+
+  assert.ok(func.called);
+});
+
+test("defines custom condition (with args)", () => {
+  const func = call();
+  const range = condition((lower, upper, actual) => actual >= lower && actual <= upper);
+
+  check(2)
+    .case(range(1, 3), func)
+    .test();
+
+  assert.ok(func.called);
 });

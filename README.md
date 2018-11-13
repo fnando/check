@@ -50,6 +50,31 @@ check(1)
   .test(number => console.log(`Received ${number}`));
 ```
 
+You can also use custom conditions for more complex comparisons. [check](https://github.com/fnando/check) comes with a few util functions:
+
+```js
+import check from "@fnando/check";
+import {within} from "@fnando/check/conditions";
+
+check(2)
+    .case(within(1, 3), () => console.log(`input is >= 1 and input <= 3`))
+    .test();
+```
+
+To create your own condition function, use `condition` like the following:
+
+```js
+import {check, condition} from "@fnando/check";
+
+const email = condition(actual => `${actual}`.match(/^.+@.+$/));
+const range = condition((lower, upper, actual) => actual >= lower && actual <= upper);
+
+check(someFunction())
+  .case(email(), () => console.log("Email provided"))
+  .case(range(1, 3), () => console.log("Number within 1..3 range"))
+  .test();
+```
+
 ## License
 
 (The MIT License)
